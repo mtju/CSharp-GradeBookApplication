@@ -13,10 +13,7 @@ namespace GradeBook.GradeBooks
 
         public override char GetLetterGrade(double averageGrade)
         {
-            if (Students.Count < 5)
-            {
-                throw new InvalidOperationException("Ranked-grading requires a minimum of 5 students to work");
-            }
+            ValidateStudentCountException();
 
             if (PercentOfStudentsWithWorseAverageGrade(averageGrade) >= 80) return 'A';
             if (PercentOfStudentsWithWorseAverageGrade(averageGrade) >= 60) return 'B';
@@ -24,6 +21,37 @@ namespace GradeBook.GradeBooks
             if (PercentOfStudentsWithWorseAverageGrade(averageGrade) >= 20) return 'D';
             // No E
             return 'F';
+        }
+
+        public override void CalculateStatistics()
+        {
+            if (!ValidateStudentCountConsole()) return;
+            base.CalculateStatistics();
+        }
+
+        public override void CalculateStudentStatistics(string name)
+        {
+            if (!ValidateStudentCountConsole()) return;
+            base.CalculateStudentStatistics(name);
+        }
+
+        private void ValidateStudentCountException()
+        {
+            if (Students.Count < 5)
+            {
+                throw new InvalidOperationException("Ranked-grading requires a minimum of 5 students to work");
+            }
+        }
+
+        private bool ValidateStudentCountConsole()
+        {
+            if (Students.Count < 5)
+            {
+                Console.WriteLine("Ranked grading requires at least 5 students with grades in order to properly calculate a student's overall grade.");
+                return false;
+            }
+
+            return true;
         }
 
         private double PercentOfStudentsWithWorseAverageGrade(double averageGrade)
